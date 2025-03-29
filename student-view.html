@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haftalık Programın</title>
+    <link rel="stylesheet" href="style.css"> <!-- style.css içerisindeki .task-item stillerini kullanır -->
+    <style>
+        /* Sayfaya özel temel stiller */
+        body { background-color: #e8f6f3; }
+        header { background-color: #1abc9c; color: #fff; }
+        main { max-width: 800px; background-color: #ffffff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); padding: 25px; margin: 25px auto; border-radius: 8px;}
+        hr { border: none; border-top: 1px solid #e0e0e0; margin: 25px 0; }
+        #program-baslik h2 { border: none; margin-bottom: 5px; color: #2c3e50; }
+        #program-baslik p { margin-top: 0; color: #555; font-size: 1.1em; }
+        .program-gunu { margin-bottom: 25px; }
+        .program-gunu h4 {
+             margin-top: 0; margin-bottom: 15px; color: #16a085;
+             border-bottom: 1px solid #a3e4d7; padding-bottom: 8px; font-weight: 600;
+         }
+        .bos-gun { font-style: italic; color: #7f8c8d; padding-left: 10px; margin-top: 10px;}
+        #hata-mesaji {
+            color: #e74c3c; font-weight: bold; text-align: center; margin-top: 20px;
+            padding: 15px; background-color: #fadbd8; border: 1px solid #f1948a; border-radius: 4px;
+         }
+    </style>
+</head>
+<body>
+    <header><h1>Haftalık Ders Programın</h1></header>
+    <main>
+        <div id="program-baslik"> <!-- Başlık JS ile eklenecek --> </div>
+        <hr>
+        <div id="program-icerik"> <!-- İçerik JS ile eklenecek --> </div>
+        <div id="hata-mesaji" style="display: none;">Hata mesajı...</div>
+    </main>
+    <footer><p>© 2023 Öğrenci Takip Sistemi</p></footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const programBaslikDiv = document.getElementById('program-baslik');
+            const programIcerikDiv = document.getElementById('program-icerik');
+            const hataMesajiDiv = document.getElementById('hata-mesaji');
+            hataMesajiDiv.style.display = 'none';
+
+            try {
+                const hash = window.location.hash.substring(1);
+                if (!hash) throw new Error("Linkte program verisi bulunamadı.");
+
+                const decodedString = decodeURIComponent(escape(atob(hash)));
+                const programData = JSON.parse(decodedString);
+
+                // Başlık
+                programBaslikDiv.innerHTML = `
+                    <h2>Merhaba, ${programData.studentName || 'Öğrenci'}!</h2>
+                    <p><strong>Program Haftası:</strong> ${formatWeek(programData.week) || 'Belirtilmemiş'}</p>
+                `;
+
+                // İçerik (Günler ve Görevler)
+                const daysOfWeek = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
+                let contentHtml = '';
+                daysOfWeek.forEach(dayLower => {
+                     const dayKey = dayLower.toLowerCase(); // Anahtar küçük harf
+                     contentHtml += renderDayTasks(dayLower, programData.days[dayKey]);
+                });
+                programIcerikDiv.innerHTML = contentHtml;
+
+
+                // Butonlara dinleyici ekle
+                addEventListenersToTaskDoneButtons();
+
+            } catch (error) {
+                console.error("Program yüklenirken hata:", error);
+                programBaslikDiv.innerHTML = '';
+                programIcerikDiv.innerHTML = '';
+                hataMesajiDiv.textContent = 'Program yüklenirken bir hata oluştu veya bu link geçersiz. Lütfen öğretmeninizle iletişime geçin.';
+                hataMesajiDiv.style.display = 'block';
+            }
+        });
+
+        /** Haftayı formatlar */
+        function formatWeek(weekString) {
+            if (!weekString || !weekString.includes('-W')) return weekString;
+            try { const parts = weekString.split('-W'); return `${parts[0]} Yılının ${parts[1]}. Haftası`; }
+            catch (e) { return weekString; }
+        }
+
+        /** Belirli bir günün görevlerini HTML olarak render eder. */
+        function renderDayTasks(dayName, tasks) {
+            let dayHtml = `<div class="program-gunu"><h4>${dayName}</h4>`;
+            if (!tasks || tasks.length === 0) {
+                dayHtml += '<p class="bos-gun">Bu gün için görev bulunmuyor.</p>';
+            } else {
+                tasks.forEach(task => {
+                    // taskId'nin varlığını kontrol et
+                    if (!task.taskId) {
+                        console.warn("Görev ID'si eksik:", task);
+                        return; // ID yoksa bu görevi atla
+                    }
+                    const taskKey = `taskStatus_${task.taskId}`; // localStorage anahtarı
+                    const isDone = localStorage.getItem(taskKey) === 'true';
+                    const doneClass = isDone ? 'task-tamamlandi' : '';
+                    const buttonText = isDone ? 'Geri Al' : 'Yapıldı';
+
+                    dayHtml += `
+                        <div class="task-item ${doneClass}" id="task-${task.taskId}">
+                            <button class="yapildi-buton" data-task-id="${task.taskId}">${buttonText}</button>
+                            <div class="task-aciklama">
+                                ${task.bookTitle ? `<strong>${task.bookTitle}</strong>` : ''}
+                                <pre>${task.description || '(Açıklama yok)'}</pre>
+                            </div>
+                        </div>`;
+                });
+            }
+            dayHtml += `</div>`;
+            return dayHtml;
+        }
+
+        /** Tüm görev tamamlama butonlarına olay dinleyici ekler */
+        function addEventListenersToTaskDoneButtons() {
+            document.querySelectorAll('.yapildi-buton[data-task-id]').forEach(button => {
+                button.addEventListener('click', handleTaskDoneClick);
+            });
+        }
+
+        /** Görev tamamlama butonu tıklama olayını yönetir. */
+        function handleTaskDoneClick(event) {
+            const button = event.target;
+            const taskId = button.dataset.taskId;
+            const taskDiv = document.getElementById(`task-${taskId}`);
+            const taskKey = `taskStatus_${taskId}`;
+            if (!taskDiv || !taskId) return; // Güvenlik kontrolü
+
+            const isCurrentlyDone = taskDiv.classList.contains('task-tamamlandi');
+            const newDoneStatus = !isCurrentlyDone;
+
+            taskDiv.classList.toggle('task-tamamlandi', newDoneStatus);
+            button.textContent = newDoneStatus ? 'Geri Al' : 'Yapıldı';
+            localStorage.setItem(taskKey, newDoneStatus.toString());
+        }
+    </script>
+</body>
+</html>

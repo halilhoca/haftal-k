@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Öğrenci Takip Sistemi - Yönetim</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>Öğrenci Takip Sistemi - Yönetim Paneli</h1>
+    </header>
+
+    <nav>
+        <button onclick="showSection('ogrenciler')">Öğrenciler</button>
+        <button onclick="showSection('kitaplar')">Kitaplar</button>
+        <button onclick="showSection('program-olustur')">Program Oluştur</button>
+    </nav>
+
+    <main>
+        <!-- Öğrenci Yönetimi Bölümü -->
+        <section id="ogrenciler" class="tab-content active">
+            <h2>Öğrenci Yönetimi</h2>
+            <form id="ogrenci-ekle-form">
+                <label for="ogrenci-adi">Öğrenci Adı Soyadı:</label>
+                <input type="text" id="ogrenci-adi" required>
+                <button type="submit">Öğrenci Ekle</button>
+            </form>
+            <h3>Kayıtlı Öğrenciler</h3>
+            <ul id="ogrenci-listesi">
+                <!-- Öğrenciler buraya eklenecek (JS ile) -->
+            </ul>
+        </section>
+
+        <!-- Kitap Yönetimi Bölümü -->
+        <section id="kitaplar" class="tab-content">
+            <h2>Kitap Yönetimi</h2>
+            <form id="kitap-ekle-form">
+                <label for="kitap-ogrenci-sec">Kitabı Eklenecek Öğrenci:</label>
+                <select id="kitap-ogrenci-sec" required>
+                    <option value="">-- Öğrenci Seçin --</option>
+                    <!-- Öğrenciler buraya eklenecek (JS ile) -->
+                </select>
+
+                <label for="kitap-adi">Kitap Adı:</label>
+                <input type="text" id="kitap-adi" required>
+                <label for="kitap-yazari">Yazarı (Opsiyonel):</label>
+                <input type="text" id="kitap-yazari">
+                <button type="submit">Kitabı Öğrenciye Ekle</button>
+            </form>
+            <h3>Kayıtlı Kitaplar (Öğrenciye Göre)</h3>
+            <ul id="kitap-listesi">
+                <!-- Kitaplar öğrenci bilgisiyle buraya eklenecek (JS ile) -->
+            </ul>
+        </section>
+
+        <!-- Program Oluşturma Bölümü (Görev Bazlı) -->
+        <section id="program-olustur" class="tab-content">
+            <h2>Günlük Program Oluştur (Görev Bazlı)</h2>
+            <form id="program-olustur-form">
+                <label for="program-ogrenci-sec">Programı Oluşturulacak Öğrenci:</label>
+                <select id="program-ogrenci-sec" required>
+                    <option value="">-- Öğrenci Seçin --</option>
+                    <!-- Öğrenciler buraya eklenecek (JS ile) -->
+                </select>
+
+                <label for="program-tarih">Program Haftası:</label>
+                <input type="week" id="program-tarih" required>
+
+                <h3>Günlük Planlama</h3>
+                <div class="gunluk-plan-gorev-bazli">
+                    <!-- Günler ve içindeki görevler JS ile dinamik olarak yönetilecek -->
+                    <div class="gun-plani-govde" data-day="pazartesi">
+                        <h4>Pazartesi <button type="button" class="gorev-ekle-buton" data-day="pazartesi">+ Görev Ekle</button></h4>
+                        <div class="gorev-listesi" id="gorev-listesi-pazartesi">
+                            <!-- Dinamik görevler buraya eklenecek -->
+                        </div>
+                    </div>
+
+                    <div class="gun-plani-govde" data-day="sali">
+                        <h4>Salı <button type="button" class="gorev-ekle-buton" data-day="sali">+ Görev Ekle</button></h4>
+                        <div class="gorev-listesi" id="gorev-listesi-sali"></div>
+                    </div>
+
+                    <div class="gun-plani-govde" data-day="carsamba">
+                        <h4>Çarşamba <button type="button" class="gorev-ekle-buton" data-day="carsamba">+ Görev Ekle</button></h4>
+                        <div class="gorev-listesi" id="gorev-listesi-carsamba"></div>
+                    </div>
+
+                    <div class="gun-plani-govde" data-day="persembe">
+                        <h4>Perşembe <button type="button" class="gorev-ekle-buton" data-day="persembe">+ Görev Ekle</button></h4>
+                        <div class="gorev-listesi" id="gorev-listesi-persembe"></div>
+                    </div>
+
+                    <div class="gun-plani-govde" data-day="cuma">
+                        <h4>Cuma <button type="button" class="gorev-ekle-buton" data-day="cuma">+ Görev Ekle</button></h4>
+                        <div class="gorev-listesi" id="gorev-listesi-cuma"></div>
+                    </div>
+
+                    <div class="gun-plani-govde" data-day="cumartesi">
+                        <h4>Cumartesi <button type="button" class="gorev-ekle-buton" data-day="cumartesi">+ Görev Ekle</button></h4>
+                        <div class="gorev-listesi" id="gorev-listesi-cumartesi"></div>
+                    </div>
+
+                    <div class="gun-plani-govde" data-day="pazar">
+                        <h4>Pazar <button type="button" class="gorev-ekle-buton" data-day="pazar">+ Görev Ekle</button></h4>
+                        <div class="gorev-listesi" id="gorev-listesi-pazar"></div>
+                    </div>
+                </div>
+
+                <button type="submit" style="margin-top: 25px;">Programı Kaydet ve Link Oluştur</button>
+            </form>
+            <div id="program-link-alani" style="margin-top: 20px; display: none;">
+                <h3>Oluşturulan Program Linki:</h3>
+                <p>Bu linki öğrencinizle paylaşabilirsiniz:</p>
+                <a id="program-linki" href="#" target="_blank"></a>
+                <p><small>(Not: Bu link sadece bir simülasyondur. Gerçek işlevsellik ve öğretmen takibi için backend gereklidir.)</small></p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2023 Öğrenci Takip Sistemi</p>
+    </footer>
+
+    <!-- Görev Şablonu (JS ile kopyalanacak) -->
+    <template id="gorev-template">
+        <div class="gorev-item">
+            <div class="gorev-inputs">
+                <label>Kitap (Opsiyonel):</label>
+                <select class="gorev-kitap-sec">
+                    <option value="">-- Kitap Seç --</option>
+                    <!-- Kitaplar buraya öğrenciye göre eklenecek -->
+                </select>
+                <label>Açıklama/Sayfalar:</label>
+                <textarea class="gorev-aciklama" rows="2" placeholder="Örn: 35-40. sayfaları oku ve özet çıkar" required></textarea>
+            </div>
+            <button type="button" class="gorev-sil-buton" title="Görevi Sil">Sil</button>
+        </div>
+    </template>
+
+    <script src="script.js"></script>
+</body>
+</html>
