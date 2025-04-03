@@ -8,438 +8,244 @@
     <title>Haftalık Programın</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Sayfaya özel temel stiller (Mevcut stiller...) */
-        body { background-color: #f4f7f6; }
-        header { background-color: #3498db; color: #fff; }
+        /* Sayfaya özel temel stiller */
+        body { background-color: #e8f6f3; }
+        header { background-color: #1abc9c; color: #fff; }
         main {
-            max-width: 1200px;
+            max-width: 900px; /* Slightly wider for table */
             background-color: #ffffff;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             padding: 25px;
             margin: 25px auto;
             border-radius: 8px;
-            overflow-x: auto;
         }
-        hr { border: none; border-top: 1px solid #e0e0e0; margin: 15px 0 25px 0; } /* HR kenar boşluğunu ayarla */
+        hr { border: none; border-top: 1px solid #e0e0e0; margin: 25px 0; }
         #program-baslik h2 { border: none; margin-bottom: 5px; color: #2c3e50; }
         #program-baslik p { margin-top: 0; color: #555; font-size: 1.1em; }
-        .bos-hucre { color: #bbb; font-style: italic; font-size: 0.9em; text-align: center; padding: 10px; }
+        .bos-gun { font-style: italic; color: #7f8c8d; padding: 15px; /* Add padding */ text-align: center; /* Center align */}
 
         #hata-mesaji {
             color: #e74c3c; font-weight: bold; text-align: center; margin-top: 20px;
             padding: 15px; background-color: #fadbd8; border: 1px solid #f1948a; border-radius: 4px;
         }
 
-        /* Grid Tablo Stilleri (Mevcut stiller...) */
-        #program-grid { width: 100%; border-collapse: collapse; margin-top: 20px; border: 1px solid #aab7b8; table-layout: fixed; }
-        #program-grid th,
-        #program-grid td { border: 1px solid #aab7b8; padding: 0; text-align: center; vertical-align: top; min-height: 60px; position: relative; width: 14%; }
-        #program-grid th { background-color: #5dade2; color: white; font-weight: bold; padding: 10px 5px; font-size: 1.05em; }
-        #program-grid .task-item { padding: 8px 10px 12px 10px; margin: 0; text-align: left; position: relative; min-height: 50px; display: flex; flex-direction: column; justify-content: center; height: 100%; box-sizing: border-box; background-color: #e9f7ef; border-bottom: 1px solid #aab7b8; }
-        #program-grid tr:last-child .task-item { border-bottom: none; }
-        #program-grid .task-item strong { font-weight: 500; font-size: 0.85em; color: #34495e; display: block; margin-bottom: 3px; text-align: center; }
-        #program-grid .task-aciklama pre { font-size: 0.95em; white-space: pre-wrap; word-wrap: break-word; font-family: inherit; margin: 0; padding: 0; background: none; border: none; color: #2c3e50; text-align: center; line-height: 1.3; }
-        #program-grid .yapildi-buton { position: absolute; bottom: 3px; right: 3px; padding: 2px 5px; font-size: 0.65em; background-color: rgba(52, 152, 219, 0.7); color: white; border: none; border-radius: 3px; cursor: pointer; transition: background-color 0.3s ease; z-index: 1; }
-        #program-grid .yapildi-buton:hover { background-color: rgba(41, 128, 185, 0.9); }
-        #program-grid .task-item.task-tamamlandi { background-color: #f1f8e9; opacity: 0.7; }
-        #program-grid .task-item.task-tamamlandi .task-aciklama,
-        #program-grid .task-item.task-tamamlandi strong { color: #888; }
-        #program-grid .task-item.task-tamamlandi .yapildi-buton { background-color: rgba(243, 156, 18, 0.7); }
-        #program-grid .task-item.task-tamamlandi .yapildi-buton:hover { background-color: rgba(211, 84, 0, 0.9); }
+        /* Tablo Stilleri */
+        #program-tablosu {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border: 1px solid #bdc3c7; /* Light gray border */
+        }
+        #program-tablosu th,
+        #program-tablosu td {
+            border: 1px solid #dde4e6; /* Slightly lighter cell borders */
+            padding: 12px 15px; /* Comfortable padding */
+            text-align: left;
+            vertical-align: top; /* Align content to the top */
+        }
+        #program-tablosu th {
+            background-color: #ecf0f1; /* Light gray header */
+            color: #34495e; /* Dark blue-gray text */
+            font-weight: 600; /* Bolder header text */
+        }
+        #program-tablosu tbody tr:nth-child(odd) {
+             background-color: #f8fafa; /* Subtle alternating row color */
+        }
+        #program-tablosu td.gun-sutunu {
+            font-weight: 500; /* Make day names slightly bolder */
+            color: #16a085; /* Use a teal color for day */
+            width: 110px; /* Fixed width for day column */
+            text-align: center; /* Center day name */
+             vertical-align: middle; /* Vertically center day name */
+        }
+        #program-tablosu td.gorevler-sutunu {
+            /* Contains the task items */
+            padding-top: 10px; /* Adjust padding */
+            padding-bottom: 10px;
+        }
 
-        /* YENİ: Aksiyon Düğmeleri Stilleri */
-        #program-actions {
-            margin-top: 15px; /* Başlığın altındaki boşluk */
-            margin-bottom: 10px; /* HR'nin üstündeki boşluk */
-            display: flex;
-            gap: 10px; /* Düğmeler arası boşluk */
-            flex-wrap: wrap; /* Küçük ekranlarda düğmelerin alta kaymasını sağla */
-            justify-content: center; /* Düğmeleri ortala */
+        /* Adjust task-item styles within the table */
+        #program-tablosu .task-item {
+            border: 1px solid #e0e0e0; /* Keep a border, but maybe lighter */
+            /* margin-bottom: 10px; No margin needed, handled by table padding */
+             margin: 5px 0; /* Small vertical margin for spacing */
+            padding: 10px 12px; /* Adjust padding slightly */
+             background-color: #ffffff; /* White background */
+             border-radius: 3px; /* Slightly less rounding */
         }
-        #program-actions button {
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9em;
-            font-weight: 500;
-            transition: background-color 0.3s ease, transform 0.1s ease;
-            color: white;
-        }
-         #program-actions button:hover {
-             transform: translateY(-1px);
-             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+         #program-tablosu .task-item:last-child {
+             margin-bottom: 0;
          }
-        #copy-link-btn { background-color: #f39c12; } /* Turuncu */
-        #copy-link-btn:hover { background-color: #e67e22; }
-        #download-pdf-btn { background-color: #e74c3c; } /* Kırmızı */
-        #download-pdf-btn:hover { background-color: #c0392b; }
-        #download-excel-btn { background-color: #27ae60; } /* Yeşil */
-        #download-excel-btn:hover { background-color: #229954; }
 
-        /* Basit durum mesajı stili */
-        #status-message {
-            text-align: center;
-            margin-top: 10px;
-            font-size: 0.9em;
-            color: #27ae60; /* Başarı için yeşil */
-            min-height: 1.2em; /* Düzen kaymasını önle */
+        #program-tablosu .task-item.task-tamamlandi {
+            background-color: #f0fff4; /* Maintain completion color */
+            border-color: #c3e6cb; /* Light green border for completed */
+            opacity: 0.8; /* Slightly less opacity */
         }
-        #status-message.error { color: #e74c3c; } /* Hata için kırmızı */
+         #program-tablosu .task-item .yapildi-buton {
+             /* Adjust position slightly if needed, but defaults should be ok */
+             top: 5px; right: 5px;
+             padding: 4px 8px; /* Slightly smaller button */
+             font-size: 0.75em;
+         }
+         #program-tablosu .task-aciklama {
+             margin-right: 65px; /* Ensure space for button */
+         }
+        #program-tablosu .task-aciklama pre {
+            line-height: 1.4; /* Adjust line height if needed */
+        }
 
     </style>
 </head>
 <body>
     <header><h1>Haftalık Ders Programın</h1></header>
-    <main id="main-content"> <!-- PDF yakalama için main'e ID ekle -->
+    <main>
         <div id="program-baslik"> <!-- Başlık JS ile eklenecek --> </div>
-
-        <!-- YENİ: Aksiyon Düğmeleri -->
-        <div id="program-actions">
-            <button id="copy-link-btn" title="Bu program sayfasının linkini panoya kopyala">🔗 Linki Kopyala</button>
-            <button id="download-pdf-btn" title="Programı PDF dosyası olarak indir">📄 PDF İndir</button>
-            <button id="download-excel-btn" title="Programı Excel dosyası olarak indir">📊 Excel İndir</button>
-        </div>
-        <!-- YENİ: Durum Mesajı Alanı -->
-        <div id="status-message"></div>
-
         <hr>
 
-        <table id="program-grid">
-             <thead id="program-grid-head"></thead>
-             <tbody id="program-grid-body"></tbody>
+        <!-- DEĞİŞİKLİK BAŞLANGIÇ: Div yerine tablo -->
+        <table id="program-tablosu">
+            <thead>
+                <tr>
+                    <th>Gün</th>
+                    <th>Görevler</th>
+                </tr>
+            </thead>
+            <tbody id="program-tbody">
+                <!-- Tablo satırları JS ile buraya eklenecek -->
+            </tbody>
         </table>
+        <!-- DEĞİŞİKLİK SONU -->
 
         <div id="hata-mesaji" style="display: none;">Hata mesajı...</div>
     </main>
     <footer><p>© 2023 Öğrenci Takip Sistemi</p></footer>
 
-     <!-- YENİ: Kütüphane Scriptleri (jsPDF, html2canvas, SheetJS) -->
-     <!-- ÖNEMLİ: İnternet bağlantısı gerektirir. Lokal kullanım için dosyaları indirmeniz gerekir. -->
-     <!-- jsPDF -->
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRjfL+pfBoNQTTNtaGTmWCvcPדרdtFzjZ8g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-     <!-- html2canvas -->
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoVNR+adDxdrGWMloTiTRxuFpMGKzQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-     <!-- SheetJS (XLSX) -->
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-r22gChDnGvCbJn9PpdDA68zQAKPjJYKOTZSKGyL3pT4s9kKY6Sqcj2YtXZd/h/yCfbQow/D5hZCRvE/P2JkM7g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-
     <script>
-        // jspdf'i global olarak erişilebilir yap
-        const { jsPDF } = window.jspdf;
-
         document.addEventListener('DOMContentLoaded', () => {
-            // Mevcut değişken tanımlamaları...
             const programBaslikDiv = document.getElementById('program-baslik');
-            const programGridHead = document.getElementById('program-grid-head');
-            const programGridBody = document.getElementById('program-grid-body');
+            // DEĞİŞİKLİK: program-icerik yerine tbody'yi seç
+            const programTbody = document.getElementById('program-tbody');
             const hataMesajiDiv = document.getElementById('hata-mesaji');
-            const statusMessageDiv = document.getElementById('status-message'); // Durum mesajı div'i
-
-            // YENİ: Düğme Elementleri
-            const copyLinkBtn = document.getElementById('copy-link-btn');
-            const downloadPdfBtn = document.getElementById('download-pdf-btn');
-            const downloadExcelBtn = document.getElementById('download-excel-btn');
-            const mainContentElement = document.getElementById('main-content'); // PDF yakalama için
-
-            // --- Global program verisi (dışa aktarma fonksiyonları için gerekli) ---
-            let currentProgramData = null;
-
-            const daysOfWeek = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
-            const dayKeyMap = { "Pazartesi": "pazartesi", "Salı": "sali", "Çarşamba": "carsamba", "Perşembe": "persembe", "Cuma": "cuma", "Cumartesi": "cumartesi", "Pazar": "pazar" };
-
-            // Durum mesajını göstermek için yardımcı fonksiyon
-            function showStatus(message, isError = false) {
-                statusMessageDiv.textContent = message;
-                statusMessageDiv.className = isError ? 'error' : '';
-                // İsteğe bağlı: Bir süre sonra gizle
-                 setTimeout(() => {
-                     statusMessageDiv.textContent = '';
-                     statusMessageDiv.className = '';
-                 }, 3000);
-            }
+            hataMesajiDiv.style.display = 'none';
 
             try {
                 const hash = window.location.hash.substring(1);
                 if (!hash) throw new Error("Linkte program verisi bulunamadı.");
 
                 const decodedString = decodeURIComponent(escape(atob(hash)));
-                currentProgramData = JSON.parse(decodedString); // Veriyi global olarak sakla
+                const programData = JSON.parse(decodedString);
 
                 // Başlık (değişiklik yok)
                 programBaslikDiv.innerHTML = `
-                    <h2>Merhaba, ${currentProgramData.studentName || 'Öğrenci'}!</h2>
-                    <p><strong>Program Haftası:</strong> ${formatWeek(currentProgramData.week) || 'Belirtilmemiş'}</p>
+                    <h2>Merhaba, ${programData.studentName || 'Öğrenci'}!</h2>
+                    <p><strong>Program Haftası:</strong> ${formatWeek(programData.week) || 'Belirtilmemiş'}</p>
                 `;
 
-                // Grid Oluşturma (Mevcut mantık...)
-                programGridHead.innerHTML = '';
-                programGridBody.innerHTML = '';
-                let maxTasks = 0;
+                // İçerik (Günler ve Görevler - TABLO YAPISI)
+                programTbody.innerHTML = ''; // Tablo gövdesini temizle
+                const daysOfWeek = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
                 daysOfWeek.forEach(dayName => {
-                    const dayKey = dayKeyMap[dayName];
-                    const tasks = currentProgramData.days[dayKey] || [];
-                    if (tasks.length > maxTasks) { maxTasks = tasks.length; }
+                    const dayKey = getDayKeyFromName(dayName); // Get 'pazartesi', 'sali' etc.
+                    const tasks = programData.days[dayKey];
+                    programTbody.appendChild(renderTableRow(dayName, tasks));
                 });
 
-                 if (maxTasks === 0) {
-                     const row = programGridBody.insertRow();
-                     const cell = row.insertCell();
-                     cell.colSpan = daysOfWeek.length;
-                     cell.innerHTML = '<p class="bos-hucre" style="text-align: center; padding: 20px;">Bu hafta için planlanmış görev bulunmuyor.</p>';
-                      // Görev yoksa düğmeleri gizle
-                      copyLinkBtn.style.display = 'none';
-                      downloadPdfBtn.style.display = 'none';
-                      downloadExcelBtn.style.display = 'none';
-                      return; // Daha fazla işlem yapmayı durdur
-                 }
 
-
-                const headerRow = programGridHead.insertRow();
-                daysOfWeek.forEach(dayName => {
-                    const th = document.createElement('th'); th.textContent = dayName; headerRow.appendChild(th);
-                });
-
-                for (let i = 0; i < maxTasks; i++) {
-                    const taskRow = programGridBody.insertRow();
-                    daysOfWeek.forEach(dayName => {
-                        const cell = taskRow.insertCell(); const dayKey = dayKeyMap[dayName]; const tasks = currentProgramData.days[dayKey] || []; const task = tasks[i];
-                        if (task) { cell.innerHTML = renderTaskContent(task); } else { cell.innerHTML = `<div class="bos-hucre">-</div>`; }
-                    });
-                }
-
-                // Görev Tamamlama Düğmeleri için Olay Dinleyici (Mevcut mantık - delegation ile)
-                programGridBody.addEventListener('click', handleTaskDoneClick);
-
-                 // --- YENİ: Düğme Olay Dinleyicileri ---
-                 copyLinkBtn.addEventListener('click', handleCopyLink);
-                 downloadPdfBtn.addEventListener('click', handleDownloadPdf);
-                 downloadExcelBtn.addEventListener('click', handleDownloadExcel);
-
+                // Butonlara dinleyici ekle (değişiklik yok, ID ile çalışıyor)
+                addEventListenersToTaskDoneButtons();
 
             } catch (error) {
-                // Mevcut hata yönetimi...
-                 console.error("Program yüklenirken hata:", error);
-                 programBaslikDiv.innerHTML = ''; programGridHead.innerHTML = ''; programGridBody.innerHTML = '<tr><td colspan="7">Program yüklenemedi. Lütfen linki kontrol edin veya öğretmeninizle iletişime geçin.</td></tr>'; hataMesajiDiv.textContent = 'Program yüklenirken bir hata oluştu veya bu link geçersiz.'; hataMesajiDiv.style.display = 'block';
-
-                 // Hata durumunda aksiyon düğmelerini devre dışı bırak/gizle
-                 if(copyLinkBtn) copyLinkBtn.style.display = 'none';
-                 if(downloadPdfBtn) downloadPdfBtn.style.display = 'none';
-                 if(downloadExcelBtn) downloadExcelBtn.style.display = 'none';
+                console.error("Program yüklenirken hata:", error);
+                programBaslikDiv.innerHTML = '';
+                 // DEĞİŞİKLİK: tbody'yi temizle
+                 programTbody.innerHTML = '<tr><td colspan="2">Program yüklenemedi.</td></tr>';
+                hataMesajiDiv.textContent = 'Program yüklenirken bir hata oluştu veya bu link geçersiz. Lütfen öğretmeninizle iletişime geçin.';
+                hataMesajiDiv.style.display = 'block';
             }
         });
 
-        /** Görevin HTML içeriğini oluşturur (hücre içine yerleştirilecek - değişiklik yok) */
-        function renderTaskContent(task) {
-            if (!task.taskId) { return '<div class="task-item">ID Hata!</div>'; }
-            const taskKey = `taskStatus_${task.taskId}`; const isDone = localStorage.getItem(taskKey) === 'true'; const doneClass = isDone ? 'task-tamamlandi' : ''; const buttonText = isDone ? 'Geri Al' : 'Yapıldı';
-            return `<div class="task-item ${doneClass}" id="task-${task.taskId}">${task.bookTitle ? `<strong>${task.bookTitle.toUpperCase()}</strong>` : ''}<div class="task-aciklama"><pre>${task.description || '(Açıklama yok)'}</pre></div><button class="yapildi-buton" data-task-id="${task.taskId}">${buttonText}</button></div>`;
+        // --- Yeni Yardımcı Fonksiyonlar ---
+        /** Gün isminden (Pazartesi) küçük harf anahtarını (pazartesi) döndürür */
+        function getDayKeyFromName(dayName) {
+             const dayMap = { "Pazartesi": "pazartesi", "Salı": "sali", "Çarşamba": "carsamba", "Perşembe": "persembe", "Cuma": "cuma", "Cumartesi": "cumartesi", "Pazar": "pazar" };
+             return dayMap[dayName] || dayName.toLowerCase();
         }
 
-        /** Görev tamamlama butonu tıklama olayını yönetir (Event Delegation - değişiklik yok) */
-        function handleTaskDoneClick(event) {
-             if (!event.target.classList.contains('yapildi-buton')) return;
-             const button = event.target; const taskId = button.dataset.taskId; const taskDiv = button.closest('.task-item'); const taskKey = `taskStatus_${taskId}`;
-             if (!taskDiv || !taskId) return;
-             const isCurrentlyDone = taskDiv.classList.contains('task-tamamlandi'); const newDoneStatus = !isCurrentlyDone;
-             taskDiv.classList.toggle('task-tamamlandi', newDoneStatus); button.textContent = newDoneStatus ? 'Geri Al' : 'Yapıldı'; localStorage.setItem(taskKey, newDoneStatus.toString());
-        }
+        /** Belirli bir gün için tablo satırı (TR) oluşturur ve render eder */
+        function renderTableRow(dayName, tasks) {
+            const tr = document.createElement('tr');
+            const tdDay = document.createElement('td');
+            const tdTasks = document.createElement('td');
 
-         /** Haftayı formatlar (değişiklik yok) */
-         function formatWeek(weekString) { if (!weekString || !weekString.includes('-W')) return weekString; try { const parts = weekString.split('-W'); return `${parts[0]} Yılının ${parts[1]}. Haftası`; } catch (e) { return weekString; } }
+            tdDay.textContent = dayName;
+            tdDay.classList.add('gun-sutunu');
+            tdTasks.classList.add('gorevler-sutunu');
 
+            if (!tasks || tasks.length === 0) {
+                tdTasks.innerHTML = '<p class="bos-gun">Bu gün için görev bulunmuyor.</p>';
+            } else {
+                let tasksHtml = ''; // Hücrenin içini dolduracak HTML
+                tasks.forEach(task => {
+                    if (!task.taskId) {
+                        console.warn("Görev ID'si eksik:", task);
+                        return; // ID yoksa bu görevi atla
+                    }
+                    const taskKey = `taskStatus_${task.taskId}`; // localStorage anahtarı
+                    const isDone = localStorage.getItem(taskKey) === 'true';
+                    const doneClass = isDone ? 'task-tamamlandi' : '';
+                    const buttonText = isDone ? 'Geri Al' : 'Yapıldı';
 
-        // --- YENİ: Aksiyon Düğmesi Yöneticileri ---
-
-        /** Link Kopyalama İşlevi */
-        function handleCopyLink() {
-            const link = window.location.href;
-            navigator.clipboard.writeText(link)
-                .then(() => {
-                     showStatus("Program linki panoya kopyalandı!");
-                })
-                .catch(err => {
-                    console.error('Link kopyalanamadı:', err);
-                    showStatus("Hata: Link kopyalanamadı.", true);
-                    // Yedek (prompt - isteğe bağlı)
-                    // window.prompt("Linki kopyalamak için: Ctrl+C, Enter", link);
+                    // Eski task-item HTML yapısını kullanıyoruz
+                    tasksHtml += `
+                        <div class="task-item ${doneClass}" id="task-${task.taskId}">
+                            <button class="yapildi-buton" data-task-id="${task.taskId}">${buttonText}</button>
+                            <div class="task-aciklama">
+                                ${task.bookTitle ? `<strong>${task.bookTitle}</strong>` : ''}
+                                <pre>${task.description || '(Açıklama yok)'}</pre>
+                            </div>
+                        </div>`;
                 });
+                 tdTasks.innerHTML = tasksHtml; // Tüm görevleri hücreye ekle
+            }
+
+            tr.appendChild(tdDay);
+            tr.appendChild(tdTasks);
+            return tr;
         }
 
-         /** PDF İndirme İşlevi */
-        function handleDownloadPdf() {
-             const { jsPDF } = window.jspdf;
-             const elementToCapture = document.getElementById('main-content'); // Tüm ana alanı yakala
-             const statusMessageDiv = document.getElementById('status-message');
-              const pdfButton = document.getElementById('download-pdf-btn');
-
-             if (!elementToCapture || typeof html2canvas === 'undefined' || typeof jsPDF === 'undefined') {
-                showStatus("Hata: PDF oluşturma kütüphaneleri yüklenemedi.", true);
-                 console.error("jsPDF veya html2canvas yüklenemedi");
-                 return;
-             }
-            pdfButton.disabled = true; // İşlem sırasında düğmeyi devre dışı bırak
-            showStatus("PDF oluşturuluyor, lütfen bekleyin...");
-
-
-             // Yakalama sırasında aksiyon düğmelerini gizle
-             document.getElementById('program-actions').style.visibility = 'hidden';
-
-             html2canvas(elementToCapture, {
-                 scale: 2, // Daha iyi kalite için çözünürlüğü artır
-                 useCORS: true, // Eğer dışarıdan resim/font varsa (burada gerekmeyebilir)
-                 logging: false,
-                 onclone: (clonedDoc) => {
-                     // Gerekirse, kopyalanan dokümanı render etmeden önce düzenle
-                     // Örneğin, düğmeleri klondan açıkça kaldır
-                     const clonedActions = clonedDoc.getElementById('program-actions');
-                     if (clonedActions) clonedActions.style.display = 'none';
-                      const clonedStatus = clonedDoc.getElementById('status-message');
-                     if (clonedStatus) clonedStatus.style.display = 'none';
-                 }
-             }).then(canvas => {
-                 const imgData = canvas.toDataURL('image/png');
-                 const pdf = new jsPDF({
-                     orientation: 'landscape', // Yatay daha iyiyse
-                     unit: 'pt', // points
-                      format: 'a4' // Standart A4 boyutu
-                 });
-
-                 const pdfWidth = pdf.internal.pageSize.getWidth();
-                 const pdfHeight = pdf.internal.pageSize.getHeight();
-                 const imgWidth = canvas.width;
-                 const imgHeight = canvas.height;
-
-                 // En boy oranını hesapla
-                 const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-
-                 // Ölçeklenmiş boyutları hesapla
-                 const scaledWidth = imgWidth * ratio * 0.95; // Kenar boşlukları için genişliğin %95'ini kullan
-                 const scaledHeight = imgHeight * ratio * 0.95; // Kenar boşlukları için yüksekliğin %95'ini kullan
-
-                 // Resmi ortala
-                 const xPos = (pdfWidth - scaledWidth) / 2;
-                 const yPos = (pdfHeight - scaledHeight) / 2;
-
-                 pdf.addImage(imgData, 'PNG', xPos, yPos, scaledWidth, scaledHeight);
-
-                  const filename = generateFilename('pdf');
-                 pdf.save(filename);
-                 showStatus("PDF başarıyla indirildi!");
-
-             }).catch(err => {
-                  console.error("PDF oluşturma hatası:", err);
-                  showStatus("Hata: PDF oluşturulamadı.", true);
-             }).finally(() => {
-                // Yakalama denemesinden sonra düğmeleri tekrar göster
-                 document.getElementById('program-actions').style.visibility = 'visible';
-                  pdfButton.disabled = false; // Düğmeyi tekrar etkinleştir
-             });
+        // --- Mevcut Fonksiyonlar (Değişiklik Gerekmiyor) ---
+        /** Haftayı formatlar */
+        function formatWeek(weekString) {
+            if (!weekString || !weekString.includes('-W')) return weekString;
+            try { const parts = weekString.split('-W'); return `${parts[0]} Yılının ${parts[1]}. Haftası`; }
+            catch (e) { return weekString; }
         }
 
-         /** Excel İndirme İşlevi */
-         function handleDownloadExcel() {
-              const excelButton = document.getElementById('download-excel-btn');
-             if (typeof XLSX === 'undefined') {
-                 showStatus("Hata: Excel oluşturma kütüphanesi yüklenemedi.", true);
-                 console.error("XLSX (SheetJS) yüklenemedi");
-                 return;
-             }
-              if (!currentProgramData) {
-                 showStatus("Hata: Program verisi bulunamadı.", true);
-                  return;
-              }
-
-              excelButton.disabled = true; // Düğmeyi devre dışı bırak
-             showStatus("Excel dosyası oluşturuluyor...");
-
-              try {
-                 // Veriyi Array of Arrays formatında hazırla
-                 const dataForSheet = [];
-
-                  // 1. Başlık Satırı (Günler)
-                  const daysOfWeek = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
-                  dataForSheet.push(daysOfWeek);
-
-                  // 2. Görev Satırları
-                  let maxTasks = 0;
-                  const dayKeyMap = { "Pazartesi": "pazartesi", "Salı": "sali", "Çarşamba": "carsamba", "Perşembe": "persembe", "Cuma": "cuma", "Cumartesi": "cumartesi", "Pazar": "pazar" };
-                   daysOfWeek.forEach(dayName => {
-                      const dayKey = dayKeyMap[dayName];
-                       const tasks = currentProgramData.days[dayKey] || [];
-                       if (tasks.length > maxTasks) { maxTasks = tasks.length; }
-                   });
-
-                 for (let i = 0; i < maxTasks; i++) {
-                      const rowData = [];
-                     daysOfWeek.forEach(dayName => {
-                           const dayKey = dayKeyMap[dayName];
-                          const tasks = currentProgramData.days[dayKey] || [];
-                          const task = tasks[i];
-                          if (task) {
-                                // Kitap başlığını ve açıklamayı Excel hücresi için birleştir
-                               const cellText = (task.bookTitle ? `${task.bookTitle.toUpperCase()}\n` : '') + (task.description || '');
-                               rowData.push(cellText.trim());
-                           } else {
-                               rowData.push(""); // Daha az görevi olan günler için boş hücre
-                          }
-                      });
-                      dataForSheet.push(rowData);
-                  }
-
-                  // Çalışma Sayfası ve Çalışma Kitabı Oluştur
-                 const ws = XLSX.utils.aoa_to_sheet(dataForSheet);
-
-                  // --- İsteğe Bağlı: Sütun Genişlikleri ---
-                 // İçeriğe göre genişlikleri tahmin et (bu temel düzeydedir, iyileştirme gerekebilir)
-                 const colWidths = daysOfWeek.map((_, colIndex) => {
-                     let maxLen = 0;
-                     dataForSheet.forEach((row) => {
-                         const cellContent = row[colIndex] || "";
-                          // Genişliği tahmin ederken yeni satır karakterlerini dikkate al
-                          const lines = cellContent.split('\n');
-                          const longestLine = lines.reduce((max, line) => Math.max(max, line.length), 0);
-                         if (longestLine > maxLen) maxLen = longestLine;
-                     });
-                     // Biraz dolgu, min/maks genişlik ver
-                      return { wch: Math.max(15, Math.min(50, maxLen + 5)) };
-                 });
-                  ws['!cols'] = colWidths;
-                  // --- İsteğe Bağlı: Satır Yükseklikleri (Daha Zor) ---
-                  // Otomatik satır yüksekliği genellikle varsayılandır, ancak gerekirse belirli yükseklikleri ayarlayabilirsiniz.
-
-
-                 const wb = XLSX.utils.book_new();
-                 XLSX.utils.book_append_sheet(wb, ws, "Haftalık Program"); // Sayfa adı
-
-                 // İndirmeyi tetikle
-                 const filename = generateFilename('xlsx');
-                 XLSX.writeFile(wb, filename);
-                 showStatus("Excel dosyası başarıyla indirildi!");
-
-              } catch (err) {
-                   console.error("Excel oluşturma hatası:", err);
-                   showStatus("Hata: Excel dosyası oluşturulamadı.", true);
-               } finally {
-                   excelButton.disabled = false; // Düğmeyi tekrar etkinleştir
-              }
+        /** Tüm görev tamamlama butonlarına olay dinleyici ekler */
+        function addEventListenersToTaskDoneButtons() {
+            document.querySelectorAll('.yapildi-buton[data-task-id]').forEach(button => {
+                button.removeEventListener('click', handleTaskDoneClick); // Önceki listenerları kaldır (güvenlik için)
+                button.addEventListener('click', handleTaskDoneClick);
+            });
         }
 
+        /** Görev tamamlama butonu tıklama olayını yönetir. */
+        function handleTaskDoneClick(event) {
+            const button = event.target;
+            const taskId = button.dataset.taskId;
+            const taskDiv = document.getElementById(`task-${taskId}`);
+            const taskKey = `taskStatus_${taskId}`;
+            if (!taskDiv || !taskId) return; // Güvenlik kontrolü
 
-         /** Program verisine göre bir dosya adı oluşturur */
-        function generateFilename(extension) {
-             let name = "Program";
-             if (currentProgramData) {
-                  name = `Program_${currentProgramData.studentName || 'Ogrenci'}_${currentProgramData.week || 'Haftalik'}`;
-             }
-             // Temel temizleme
-             name = name.replace(/[^a-z0-9_\-]/gi, '_').replace(/_+/g, '_');
-              return `${name}.${extension}`;
-         }
+            const isCurrentlyDone = taskDiv.classList.contains('task-tamamlandi');
+            const newDoneStatus = !isCurrentlyDone;
 
-
+            taskDiv.classList.toggle('task-tamamlandi', newDoneStatus);
+            button.textContent = newDoneStatus ? 'Geri Al' : 'Yapıldı';
+            localStorage.setItem(taskKey, newDoneStatus.toString());
+        }
     </script>
-
 </body>
 </html>
 --- END OF FILE student-view.html ---
