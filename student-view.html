@@ -1,28 +1,147 @@
+--- START OF FILE student-view.html ---
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Haftalık Programın</title>
-    <link rel="stylesheet" href="style.css"> <!-- style.css içerisindeki .task-item stillerini kullanır -->
+    <link rel="stylesheet" href="style.css">
     <style>
         /* Sayfaya özel temel stiller */
-        body { background-color: #e8f6f3; }
-        header { background-color: #1abc9c; color: #fff; }
-        main { max-width: 800px; background-color: #ffffff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); padding: 25px; margin: 25px auto; border-radius: 8px;}
+        body { background-color: #f4f7f6; } /* Slightly off-white background */
+        header { background-color: #3498db; color: #fff; } /* Blue header */
+        main {
+            max-width: 1200px; /* Wider for grid */
+            background-color: #ffffff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            margin: 25px auto;
+            border-radius: 8px;
+            overflow-x: auto; /* Add horizontal scroll for smaller screens */
+        }
         hr { border: none; border-top: 1px solid #e0e0e0; margin: 25px 0; }
         #program-baslik h2 { border: none; margin-bottom: 5px; color: #2c3e50; }
         #program-baslik p { margin-top: 0; color: #555; font-size: 1.1em; }
-        .program-gunu { margin-bottom: 25px; }
-        .program-gunu h4 {
-             margin-top: 0; margin-bottom: 15px; color: #16a085;
-             border-bottom: 1px solid #a3e4d7; padding-bottom: 8px; font-weight: 600;
-         }
-        .bos-gun { font-style: italic; color: #7f8c8d; padding-left: 10px; margin-top: 10px;}
+        .bos-hucre { /* Style for empty cells in the grid */
+            color: #bbb;
+            font-style: italic;
+            font-size: 0.9em;
+            text-align: center;
+             padding: 10px; /* Ensure some space */
+        }
+
         #hata-mesaji {
             color: #e74c3c; font-weight: bold; text-align: center; margin-top: 20px;
             padding: 15px; background-color: #fadbd8; border: 1px solid #f1948a; border-radius: 4px;
+        }
+
+        /* Grid Tablo Stilleri - Target Image Style */
+        #program-grid {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border: 1px solid #aab7b8; /* Slightly darker border */
+            table-layout: fixed; /* Fixed layout helps column widths */
+        }
+        #program-grid th,
+        #program-grid td {
+            border: 1px solid #aab7b8;
+            padding: 0; /* Remove padding, control inside task */
+            text-align: center;
+            vertical-align: top;
+            min-height: 60px; /* Minimum cell height */
+             position: relative; /* For button positioning if needed */
+             width: 14%; /* Approx equal width, adjust as needed */
+        }
+        #program-grid th {
+            background-color: #5dade2; /* Blue header like image */
+            color: white;
+            font-weight: bold;
+            padding: 10px 5px; /* Padding for header text */
+            font-size: 1.05em;
+        }
+        /* Remove alternating row color if aiming for image style */
+        /* #program-grid tbody tr:nth-child(odd) { background-color: #f8fafa; } */
+
+        /* Style for task items inside cells */
+        #program-grid .task-item {
+            /* background-color: #eaf2f8; /* Light blue background for tasks */
+             /* border-bottom: 1px solid #d6eaf8; /* Separator line between tasks within a cell */
+            padding: 8px 10px 12px 10px; /* Padding inside the task block */
+            margin: 0; /* No margin inside cell */
+            text-align: left; /* Align task text left */
+             position: relative; /* For positioning button */
+            min-height: 50px; /* Min height for task area */
+            display: flex; /* Use flexbox for layout */
+            flex-direction: column; /* Stack elements vertically */
+            justify-content: center; /* Center content vertically */
+            height: 100%; /* Try to fill cell height */
+            box-sizing: border-box;
+            background-color: #e9f7ef; /* Light green tint like image rows */
+            border-bottom: 1px solid #aab7b8; /* Line between task 'rows' */
+        }
+        #program-grid tr td:last-child .task-item{
+             /* border-right: none; Remove border if cells handle it */
+        }
+         #program-grid tr:last-child .task-item {
+            border-bottom: none; /* No bottom border for last row items */
+        }
+
+
+        #program-grid .task-item strong { /* Book/Subject Title */
+             font-weight: 500; /* Normal weight, as in image */
+             font-size: 0.85em; /* Smaller font for book */
+             color: #34495e; /* Darker text */
+             display: block;
+             margin-bottom: 3px;
+             text-align: center; /* Center align like "PARAGRAF" */
+        }
+        #program-grid .task-aciklama pre {
+            font-size: 0.95em; /* Main task description font size */
+             white-space: pre-wrap;
+             word-wrap: break-word;
+             font-family: inherit;
+             margin: 0; padding: 0;
+             background: none; border: none;
+             color: #2c3e50;
+             text-align: center; /* Center description */
+             line-height: 1.3;
+        }
+
+        /* Adjust "Yapıldı" Button style and position */
+        #program-grid .yapildi-buton {
+            position: absolute;
+            bottom: 3px; /* Position near the bottom */
+            right: 3px; /* Position to the right */
+            padding: 2px 5px;
+            font-size: 0.65em; /* Smaller button */
+            background-color: rgba(52, 152, 219, 0.7); /* Semi-transparent blue */
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            z-index: 1; /* Ensure button is clickable */
+        }
+        #program-grid .yapildi-buton:hover { background-color: rgba(41, 128, 185, 0.9); } /* Darker blue on hover */
+
+         #program-grid .task-item.task-tamamlandi {
+             background-color: #f1f8e9; /* Very light green for completed */
+             opacity: 0.7; /* Keep opacity low */
          }
+          #program-grid .task-item.task-tamamlandi .task-aciklama,
+          #program-grid .task-item.task-tamamlandi strong {
+            /* text-decoration: line-through; Remove strikethrough */
+             color: #888; /* Gray out text */
+         }
+         #program-grid .task-item.task-tamamlandi .yapildi-buton {
+              background-color: rgba(243, 156, 18, 0.7); /* Semi-transparent orange for undo */
+         }
+          #program-grid .task-item.task-tamamlandi .yapildi-buton:hover {
+              background-color: rgba(211, 84, 0, 0.9); /* Darker orange on hover */
+          }
+
     </style>
 </head>
 <body>
@@ -30,7 +149,18 @@
     <main>
         <div id="program-baslik"> <!-- Başlık JS ile eklenecek --> </div>
         <hr>
-        <div id="program-icerik"> <!-- İçerik JS ile eklenecek --> </div>
+
+        <!-- DEĞİŞİKLİK BAŞLANGIÇ: Grid Tablosu -->
+        <table id="program-grid">
+             <thead id="program-grid-head">
+                <!-- Başlık satırı JS ile buraya eklenecek -->
+            </thead>
+            <tbody id="program-grid-body">
+                <!-- Görev satırları JS ile buraya eklenecek -->
+            </tbody>
+        </table>
+        <!-- DEĞİŞİKLİK SONU -->
+
         <div id="hata-mesaji" style="display: none;">Hata mesajı...</div>
     </main>
     <footer><p>© 2023 Öğrenci Takip Sistemi</p></footer>
@@ -38,9 +168,15 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const programBaslikDiv = document.getElementById('program-baslik');
-            const programIcerikDiv = document.getElementById('program-icerik');
+            const programGridHead = document.getElementById('program-grid-head'); // THEAD
+            const programGridBody = document.getElementById('program-grid-body'); // TBODY
             const hataMesajiDiv = document.getElementById('hata-mesaji');
             hataMesajiDiv.style.display = 'none';
+
+            // Define the order of days for columns
+            const daysOfWeek = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
+            // Mapping to data keys
+            const dayKeyMap = { "Pazartesi": "pazartesi", "Salı": "sali", "Çarşamba": "carsamba", "Perşembe": "persembe", "Cuma": "cuma", "Cumartesi": "cumartesi", "Pazar": "pazar" };
 
             try {
                 const hash = window.location.hash.substring(1);
@@ -49,86 +185,116 @@
                 const decodedString = decodeURIComponent(escape(atob(hash)));
                 const programData = JSON.parse(decodedString);
 
-                // Başlık
+                // Başlık (değişiklik yok)
                 programBaslikDiv.innerHTML = `
                     <h2>Merhaba, ${programData.studentName || 'Öğrenci'}!</h2>
                     <p><strong>Program Haftası:</strong> ${formatWeek(programData.week) || 'Belirtilmemiş'}</p>
                 `;
 
-                // İçerik (Günler ve Görevler)
-                const daysOfWeek = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
-                let contentHtml = '';
-                daysOfWeek.forEach(dayLower => {
-                     const dayKey = dayLower.toLowerCase(); // Anahtar küçük harf
-                     contentHtml += renderDayTasks(dayLower, programData.days[dayKey]);
+                // --- Grid Oluşturma ---
+                programGridHead.innerHTML = ''; // Temizle
+                programGridBody.innerHTML = ''; // Temizle
+
+                // 1. Başlık Satırını Oluştur (Günler)
+                const headerRow = programGridHead.insertRow();
+                daysOfWeek.forEach(dayName => {
+                    const th = document.createElement('th');
+                    th.textContent = dayName;
+                    headerRow.appendChild(th);
                 });
-                programIcerikDiv.innerHTML = contentHtml;
+
+                // 2. Maksimum Görev Sayısını Bul (Satır Sayısını Belirler)
+                let maxTasks = 0;
+                daysOfWeek.forEach(dayName => {
+                    const dayKey = dayKeyMap[dayName];
+                    const tasks = programData.days[dayKey] || [];
+                    if (tasks.length > maxTasks) {
+                        maxTasks = tasks.length;
+                    }
+                });
+
+                 // If no tasks at all, display a message
+                if (maxTasks === 0) {
+                    const row = programGridBody.insertRow();
+                    const cell = row.insertCell();
+                    cell.colSpan = daysOfWeek.length;
+                    cell.innerHTML = '<p class="bos-hucre" style="text-align: center; padding: 20px;">Bu hafta için planlanmış görev bulunmuyor.</p>';
+                    return; // Stop further processing
+                }
 
 
-                // Butonlara dinleyici ekle
-                addEventListenersToTaskDoneButtons();
+                // 3. Görev Satırlarını Oluştur
+                for (let i = 0; i < maxTasks; i++) { // Her görev "satırı" için döngü
+                    const taskRow = programGridBody.insertRow();
+                    daysOfWeek.forEach(dayName => { // Her gün (sütun) için döngü
+                        const cell = taskRow.insertCell();
+                        const dayKey = dayKeyMap[dayName];
+                        const tasks = programData.days[dayKey] || [];
+                        const task = tasks[i]; // O günün i'inci görevini al
+
+                        if (task) {
+                            // Görev varsa, içeriği render et
+                            cell.innerHTML = renderTaskContent(task);
+                        } else {
+                            // Görev yoksa boş hücre
+                            cell.innerHTML = `<div class="bos-hucre">-</div>`;
+                        }
+                    });
+                }
+
+                // 4. Event Listener Ekle (Event Delegation)
+                programGridBody.addEventListener('click', handleTaskDoneClick);
 
             } catch (error) {
                 console.error("Program yüklenirken hata:", error);
                 programBaslikDiv.innerHTML = '';
-                programIcerikDiv.innerHTML = '';
-                hataMesajiDiv.textContent = 'Program yüklenirken bir hata oluştu veya bu link geçersiz. Lütfen öğretmeninizle iletişime geçin.';
+                programGridHead.innerHTML = ''; // Temizle
+                programGridBody.innerHTML = '<tr><td colspan="7">Program yüklenemedi. Lütfen linki kontrol edin veya öğretmeninizle iletişime geçin.</td></tr>'; // Update colspan
+                hataMesajiDiv.textContent = 'Program yüklenirken bir hata oluştu veya bu link geçersiz.';
                 hataMesajiDiv.style.display = 'block';
             }
         });
 
-        /** Haftayı formatlar */
-        function formatWeek(weekString) {
-            if (!weekString || !weekString.includes('-W')) return weekString;
-            try { const parts = weekString.split('-W'); return `${parts[0]} Yılının ${parts[1]}. Haftası`; }
-            catch (e) { return weekString; }
-        }
-
-        /** Belirli bir günün görevlerini HTML olarak render eder. */
-        function renderDayTasks(dayName, tasks) {
-            let dayHtml = `<div class="program-gunu"><h4>${dayName}</h4>`;
-            if (!tasks || tasks.length === 0) {
-                dayHtml += '<p class="bos-gun">Bu gün için görev bulunmuyor.</p>';
-            } else {
-                tasks.forEach(task => {
-                    // taskId'nin varlığını kontrol et
-                    if (!task.taskId) {
-                        console.warn("Görev ID'si eksik:", task);
-                        return; // ID yoksa bu görevi atla
-                    }
-                    const taskKey = `taskStatus_${task.taskId}`; // localStorage anahtarı
-                    const isDone = localStorage.getItem(taskKey) === 'true';
-                    const doneClass = isDone ? 'task-tamamlandi' : '';
-                    const buttonText = isDone ? 'Geri Al' : 'Yapıldı';
-
-                    dayHtml += `
-                        <div class="task-item ${doneClass}" id="task-${task.taskId}">
-                            <button class="yapildi-buton" data-task-id="${task.taskId}">${buttonText}</button>
-                            <div class="task-aciklama">
-                                ${task.bookTitle ? `<strong>${task.bookTitle}</strong>` : ''}
-                                <pre>${task.description || '(Açıklama yok)'}</pre>
-                            </div>
-                        </div>`;
-                });
+        /** Görevin HTML içeriğini oluşturur (hücre içine yerleştirilecek) */
+        function renderTaskContent(task) {
+            if (!task.taskId) {
+                 console.warn("Görev ID'si eksik:", task);
+                 return '<div class="task-item">ID Hata!</div>'; // ID yoksa hata göster
             }
-            dayHtml += `</div>`;
-            return dayHtml;
+            const taskKey = `taskStatus_${task.taskId}`;
+            const isDone = localStorage.getItem(taskKey) === 'true';
+            const doneClass = isDone ? 'task-tamamlandi' : '';
+            const buttonText = isDone ? 'Geri Al' : 'Yapıldı';
+
+             // Image-like structure: Optional Book/Subject on top, description below
+            return `
+                <div class="task-item ${doneClass}" id="task-${task.taskId}">
+                     ${task.bookTitle ? `<strong>${task.bookTitle.toUpperCase()}</strong>` : ''}
+                     <div class="task-aciklama">
+                         <pre>${task.description || '(Açıklama yok)'}</pre>
+                    </div>
+                    <button class="yapildi-buton" data-task-id="${task.taskId}">${buttonText}</button>
+                </div>`;
         }
 
-        /** Tüm görev tamamlama butonlarına olay dinleyici ekler */
-        function addEventListenersToTaskDoneButtons() {
-            document.querySelectorAll('.yapildi-buton[data-task-id]').forEach(button => {
-                button.addEventListener('click', handleTaskDoneClick);
-            });
-        }
 
-        /** Görev tamamlama butonu tıklama olayını yönetir. */
+        /** Görev tamamlama butonu tıklama olayını yönetir (Event Delegation) */
         function handleTaskDoneClick(event) {
+             // Sadece .yapildi-buton'a tıklanırsa işlem yap
+            if (!event.target.classList.contains('yapildi-buton')) {
+                return;
+            }
+
             const button = event.target;
             const taskId = button.dataset.taskId;
-            const taskDiv = document.getElementById(`task-${taskId}`);
-            const taskKey = `taskStatus_${taskId}`;
-            if (!taskDiv || !taskId) return; // Güvenlik kontrolü
+            // Butona en yakın .task-item elementini bul
+            const taskDiv = button.closest('.task-item');
+             const taskKey = `taskStatus_${taskId}`;
+
+            if (!taskDiv || !taskId) {
+                console.error("Task div or ID not found for button:", button);
+                return; // Güvenlik kontrolü
+             }
 
             const isCurrentlyDone = taskDiv.classList.contains('task-tamamlandi');
             const newDoneStatus = !isCurrentlyDone;
@@ -137,6 +303,15 @@
             button.textContent = newDoneStatus ? 'Geri Al' : 'Yapıldı';
             localStorage.setItem(taskKey, newDoneStatus.toString());
         }
+
+        /** Haftayı formatlar (değişiklik yok) */
+        function formatWeek(weekString) {
+            if (!weekString || !weekString.includes('-W')) return weekString;
+            try { const parts = weekString.split('-W'); return `${parts[0]} Yılının ${parts[1]}. Haftası`; }
+            catch (e) { return weekString; }
+        }
+
     </script>
 </body>
 </html>
+--- HALİL HOCA BAŞARILAR DİLER ---
