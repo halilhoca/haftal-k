@@ -1,100 +1,28 @@
---- START OF FILE student-view.html ---
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Haftalık Programın</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css"> <!-- style.css içerisindeki .task-item stillerini kullanır -->
     <style>
         /* Sayfaya özel temel stiller */
         body { background-color: #e8f6f3; }
         header { background-color: #1abc9c; color: #fff; }
-        main {
-            max-width: 900px; /* Slightly wider for table */
-            background-color: #ffffff;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            padding: 25px;
-            margin: 25px auto;
-            border-radius: 8px;
-        }
+        main { max-width: 800px; background-color: #ffffff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); padding: 25px; margin: 25px auto; border-radius: 8px;}
         hr { border: none; border-top: 1px solid #e0e0e0; margin: 25px 0; }
         #program-baslik h2 { border: none; margin-bottom: 5px; color: #2c3e50; }
         #program-baslik p { margin-top: 0; color: #555; font-size: 1.1em; }
-        .bos-gun { font-style: italic; color: #7f8c8d; padding: 15px; /* Add padding */ text-align: center; /* Center align */}
-
+        .program-gunu { margin-bottom: 25px; }
+        .program-gunu h4 {
+             margin-top: 0; margin-bottom: 15px; color: #16a085;
+             border-bottom: 1px solid #a3e4d7; padding-bottom: 8px; font-weight: 600;
+         }
+        .bos-gun { font-style: italic; color: #7f8c8d; padding-left: 10px; margin-top: 10px;}
         #hata-mesaji {
             color: #e74c3c; font-weight: bold; text-align: center; margin-top: 20px;
             padding: 15px; background-color: #fadbd8; border: 1px solid #f1948a; border-radius: 4px;
-        }
-
-        /* Tablo Stilleri */
-        #program-tablosu {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            border: 1px solid #bdc3c7; /* Light gray border */
-        }
-        #program-tablosu th,
-        #program-tablosu td {
-            border: 1px solid #dde4e6; /* Slightly lighter cell borders */
-            padding: 12px 15px; /* Comfortable padding */
-            text-align: left;
-            vertical-align: top; /* Align content to the top */
-        }
-        #program-tablosu th {
-            background-color: #ecf0f1; /* Light gray header */
-            color: #34495e; /* Dark blue-gray text */
-            font-weight: 600; /* Bolder header text */
-        }
-        #program-tablosu tbody tr:nth-child(odd) {
-             background-color: #f8fafa; /* Subtle alternating row color */
-        }
-        #program-tablosu td.gun-sutunu {
-            font-weight: 500; /* Make day names slightly bolder */
-            color: #16a085; /* Use a teal color for day */
-            width: 110px; /* Fixed width for day column */
-            text-align: center; /* Center day name */
-             vertical-align: middle; /* Vertically center day name */
-        }
-        #program-tablosu td.gorevler-sutunu {
-            /* Contains the task items */
-            padding-top: 10px; /* Adjust padding */
-            padding-bottom: 10px;
-        }
-
-        /* Adjust task-item styles within the table */
-        #program-tablosu .task-item {
-            border: 1px solid #e0e0e0; /* Keep a border, but maybe lighter */
-            /* margin-bottom: 10px; No margin needed, handled by table padding */
-             margin: 5px 0; /* Small vertical margin for spacing */
-            padding: 10px 12px; /* Adjust padding slightly */
-             background-color: #ffffff; /* White background */
-             border-radius: 3px; /* Slightly less rounding */
-        }
-         #program-tablosu .task-item:last-child {
-             margin-bottom: 0;
          }
-
-        #program-tablosu .task-item.task-tamamlandi {
-            background-color: #f0fff4; /* Maintain completion color */
-            border-color: #c3e6cb; /* Light green border for completed */
-            opacity: 0.8; /* Slightly less opacity */
-        }
-         #program-tablosu .task-item .yapildi-buton {
-             /* Adjust position slightly if needed, but defaults should be ok */
-             top: 5px; right: 5px;
-             padding: 4px 8px; /* Slightly smaller button */
-             font-size: 0.75em;
-         }
-         #program-tablosu .task-aciklama {
-             margin-right: 65px; /* Ensure space for button */
-         }
-        #program-tablosu .task-aciklama pre {
-            line-height: 1.4; /* Adjust line height if needed */
-        }
-
     </style>
 </head>
 <body>
@@ -102,21 +30,7 @@
     <main>
         <div id="program-baslik"> <!-- Başlık JS ile eklenecek --> </div>
         <hr>
-
-        <!-- DEĞİŞİKLİK BAŞLANGIÇ: Div yerine tablo -->
-        <table id="program-tablosu">
-            <thead>
-                <tr>
-                    <th>Gün</th>
-                    <th>Görevler</th>
-                </tr>
-            </thead>
-            <tbody id="program-tbody">
-                <!-- Tablo satırları JS ile buraya eklenecek -->
-            </tbody>
-        </table>
-        <!-- DEĞİŞİKLİK SONU -->
-
+        <div id="program-icerik"> <!-- İçerik JS ile eklenecek --> </div>
         <div id="hata-mesaji" style="display: none;">Hata mesajı...</div>
     </main>
     <footer><p>© 2023 Öğrenci Takip Sistemi</p></footer>
@@ -124,8 +38,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const programBaslikDiv = document.getElementById('program-baslik');
-            // DEĞİŞİKLİK: program-icerik yerine tbody'yi seç
-            const programTbody = document.getElementById('program-tbody');
+            const programIcerikDiv = document.getElementById('program-icerik');
             const hataMesajiDiv = document.getElementById('hata-mesaji');
             hataMesajiDiv.style.display = 'none';
 
@@ -136,57 +49,49 @@
                 const decodedString = decodeURIComponent(escape(atob(hash)));
                 const programData = JSON.parse(decodedString);
 
-                // Başlık (değişiklik yok)
+                // Başlık
                 programBaslikDiv.innerHTML = `
                     <h2>Merhaba, ${programData.studentName || 'Öğrenci'}!</h2>
                     <p><strong>Program Haftası:</strong> ${formatWeek(programData.week) || 'Belirtilmemiş'}</p>
                 `;
 
-                // İçerik (Günler ve Görevler - TABLO YAPISI)
-                programTbody.innerHTML = ''; // Tablo gövdesini temizle
+                // İçerik (Günler ve Görevler)
                 const daysOfWeek = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
-                daysOfWeek.forEach(dayName => {
-                    const dayKey = getDayKeyFromName(dayName); // Get 'pazartesi', 'sali' etc.
-                    const tasks = programData.days[dayKey];
-                    programTbody.appendChild(renderTableRow(dayName, tasks));
+                let contentHtml = '';
+                daysOfWeek.forEach(dayLower => {
+                     const dayKey = dayLower.toLowerCase(); // Anahtar küçük harf
+                     contentHtml += renderDayTasks(dayLower, programData.days[dayKey]);
                 });
+                programIcerikDiv.innerHTML = contentHtml;
 
 
-                // Butonlara dinleyici ekle (değişiklik yok, ID ile çalışıyor)
+                // Butonlara dinleyici ekle
                 addEventListenersToTaskDoneButtons();
 
             } catch (error) {
                 console.error("Program yüklenirken hata:", error);
                 programBaslikDiv.innerHTML = '';
-                 // DEĞİŞİKLİK: tbody'yi temizle
-                 programTbody.innerHTML = '<tr><td colspan="2">Program yüklenemedi.</td></tr>';
+                programIcerikDiv.innerHTML = '';
                 hataMesajiDiv.textContent = 'Program yüklenirken bir hata oluştu veya bu link geçersiz. Lütfen öğretmeninizle iletişime geçin.';
                 hataMesajiDiv.style.display = 'block';
             }
         });
 
-        // --- Yeni Yardımcı Fonksiyonlar ---
-        /** Gün isminden (Pazartesi) küçük harf anahtarını (pazartesi) döndürür */
-        function getDayKeyFromName(dayName) {
-             const dayMap = { "Pazartesi": "pazartesi", "Salı": "sali", "Çarşamba": "carsamba", "Perşembe": "persembe", "Cuma": "cuma", "Cumartesi": "cumartesi", "Pazar": "pazar" };
-             return dayMap[dayName] || dayName.toLowerCase();
+        /** Haftayı formatlar */
+        function formatWeek(weekString) {
+            if (!weekString || !weekString.includes('-W')) return weekString;
+            try { const parts = weekString.split('-W'); return `${parts[0]} Yılının ${parts[1]}. Haftası`; }
+            catch (e) { return weekString; }
         }
 
-        /** Belirli bir gün için tablo satırı (TR) oluşturur ve render eder */
-        function renderTableRow(dayName, tasks) {
-            const tr = document.createElement('tr');
-            const tdDay = document.createElement('td');
-            const tdTasks = document.createElement('td');
-
-            tdDay.textContent = dayName;
-            tdDay.classList.add('gun-sutunu');
-            tdTasks.classList.add('gorevler-sutunu');
-
+        /** Belirli bir günün görevlerini HTML olarak render eder. */
+        function renderDayTasks(dayName, tasks) {
+            let dayHtml = `<div class="program-gunu"><h4>${dayName}</h4>`;
             if (!tasks || tasks.length === 0) {
-                tdTasks.innerHTML = '<p class="bos-gun">Bu gün için görev bulunmuyor.</p>';
+                dayHtml += '<p class="bos-gun">Bu gün için görev bulunmuyor.</p>';
             } else {
-                let tasksHtml = ''; // Hücrenin içini dolduracak HTML
                 tasks.forEach(task => {
+                    // taskId'nin varlığını kontrol et
                     if (!task.taskId) {
                         console.warn("Görev ID'si eksik:", task);
                         return; // ID yoksa bu görevi atla
@@ -196,8 +101,7 @@
                     const doneClass = isDone ? 'task-tamamlandi' : '';
                     const buttonText = isDone ? 'Geri Al' : 'Yapıldı';
 
-                    // Eski task-item HTML yapısını kullanıyoruz
-                    tasksHtml += `
+                    dayHtml += `
                         <div class="task-item ${doneClass}" id="task-${task.taskId}">
                             <button class="yapildi-buton" data-task-id="${task.taskId}">${buttonText}</button>
                             <div class="task-aciklama">
@@ -206,26 +110,14 @@
                             </div>
                         </div>`;
                 });
-                 tdTasks.innerHTML = tasksHtml; // Tüm görevleri hücreye ekle
             }
-
-            tr.appendChild(tdDay);
-            tr.appendChild(tdTasks);
-            return tr;
-        }
-
-        // --- Mevcut Fonksiyonlar (Değişiklik Gerekmiyor) ---
-        /** Haftayı formatlar */
-        function formatWeek(weekString) {
-            if (!weekString || !weekString.includes('-W')) return weekString;
-            try { const parts = weekString.split('-W'); return `${parts[0]} Yılının ${parts[1]}. Haftası`; }
-            catch (e) { return weekString; }
+            dayHtml += `</div>`;
+            return dayHtml;
         }
 
         /** Tüm görev tamamlama butonlarına olay dinleyici ekler */
         function addEventListenersToTaskDoneButtons() {
             document.querySelectorAll('.yapildi-buton[data-task-id]').forEach(button => {
-                button.removeEventListener('click', handleTaskDoneClick); // Önceki listenerları kaldır (güvenlik için)
                 button.addEventListener('click', handleTaskDoneClick);
             });
         }
@@ -248,4 +140,3 @@
     </script>
 </body>
 </html>
---- END OF FILE student-view.html ---
